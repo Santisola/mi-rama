@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { getProgresiones, getProgresionesForRama, getRama } from '@/lib/api';
 import { Progresion, Rama } from '@/lib/supabase';
 
-export default function ProgresionesPage() {
+function ProgresionesContent() {
   const searchParams = useSearchParams();
   const ramaId = searchParams.get('rama_id') ? parseInt(searchParams.get('rama_id') as string) : null;
   
@@ -132,5 +132,20 @@ export default function ProgresionesPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function ProgresionesPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex justify-center items-center h-64">
+        <div className="text-center">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-amber-600 border-r-transparent"></div>
+          <p className="mt-2">Cargando...</p>
+        </div>
+      </div>
+    }>
+      <ProgresionesContent />
+    </Suspense>
   );
 }
