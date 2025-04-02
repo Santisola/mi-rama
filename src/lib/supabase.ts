@@ -9,13 +9,13 @@ export const supabase = createClient(
 // Types for our database tables
 export type Rama = {
   id: number;
-  rama: string;
+  nombre: string;
   created_at?: string;
 };
 
 export type Progresion = {
   id: number;
-  progresion: string;
+  nombre: string;
   descripcion?: string;
   imagen?: string;
   id_rama: number;
@@ -31,4 +31,6 @@ export type Beneficiario = {
   id_rama: number;
   id_progresion?: number;
   created_at?: string;
+  ramas?: Rama;
+  progresiones?: Progresion;
 };
