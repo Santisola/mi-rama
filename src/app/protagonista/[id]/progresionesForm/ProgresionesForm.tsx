@@ -1,17 +1,30 @@
 'use client'
 
-import { getProgresiones } from '@/lib/api';
+import Spinner from '@/components/spinner/Spinner';
+import { getProgresiones, updateBeneficiario } from '@/lib/api';
+import { Beneficiario } from '@/lib/supabase';
 import { useEffect, useMemo, useState } from 'react'
 
-export default function ProgresionesForm() {
+interface FormStatus {
+	error: boolean;
+	message: string;
+}
+
+export default function ProgresionesForm({protagonista}: {protagonista: Beneficiario}) {
 	const [progresiones, setProgresiones] = useState<any[]>([]);
 	const [rama, setRama] = useState<string>('');
 	const [selectedProgresion, setSelectedProgresion] = useState<string | null>()
 	const [isEditing, setIsEditing] = useState<boolean>(false);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [formStatus, setFormStatus] = useState<FormStatus>({
+		error: false,
+		message: ''
+	});
 	
 	useEffect(() => {
 		getProgresiones().then(res => {
 			setProgresiones(res);
+			setRama(protagonista.ramas?.id.toString() || '');
 		});
 	}, []);
 
@@ -19,6 +32,61 @@ export default function ProgresionesForm() {
 		if (!rama || rama === '' || rama === '...') return progresiones;
 		return progresiones.filter(progresion => progresion.id_rama == rama);
 	}, [rama, progresiones]);
+
+	const handleProgresionUpdate = async () => {
+		setIsLoading(true);
+		setFormStatus({
+			error: false,
+			message: ''
+		})
+
+		try {	
+			if (!selectedProgresion) {
+				setFormStatus({
+					error: true,
+					message: 'Seleccione una progresión'
+				})
+				return;
+			}
+			if (!rama) {
+				setFormStatus({
+					error: true,
+					message: 'Seleccione una rama'
+				})
+				return;
+			}
+			
+			const selectedProgresionId = parseInt(selectedProgresion);
+			const selectedRamaId = parseInt(rama);
+			
+			const data = {
+				id: protagonista.id,
+				created_at: protagonista.created_at,
+				nombre: protagonista.nombre,
+				nacimiento: protagonista.nacimiento,
+				genero: protagonista.genero,
+				id_rama: selectedRamaId,
+				id_progresion: selectedProgresionId
+			}
+		
+			const newPibe = await updateBeneficiario(data);
+			setIsEditing(false);
+			setIsLoading(false);
+			setFormStatus({
+				error: false,
+				message: ''
+			})
+			console.log('newPibe', newPibe);
+			location.reload()
+		} catch (error) {
+			console.log(error);
+			setFormStatus({
+				error: true,
+				message: 'Ocurrió un error con el formulario, por favor intenta de nuevo'
+			});
+			setIsLoading(false);
+		}
+	}
 	
 	return (
 		<>
@@ -36,14 +104,15 @@ export default function ProgresionesForm() {
 				<select
 					name="rama"
 					id="rama"
+					disabled={isLoading}
 					onChange={ev => setRama(ev.target.value)}
 					className='mt-1 w-fit border min-w-3xs border-gray-300 rounded-md py-2 focus:outline-none focus:ring focus:border-blue-300'
 				>
 					<option selected disabled>...</option>
-					<option value="1">Manada</option>
-					<option value="2">Unidad</option>
-					<option value="3">Caminantes</option>
-					<option value="4">Rovers</option>
+					<option value="1" selected={protagonista.ramas?.id === 1}>Manada</option>
+					<option value="2" selected={protagonista.ramas?.id === 2}>Unidad</option>
+					<option value="3" selected={protagonista.ramas?.id === 3}>Caminantes</option>
+					<option value="4" selected={protagonista.ramas?.id === 4}>Rovers</option>
 				</select>
 			</div>
 
@@ -52,6 +121,7 @@ export default function ProgresionesForm() {
 				<select
 					name="progresion"
 					id="progresion"
+					disabled={isLoading}
 					onChange={ev => setSelectedProgresion(ev.target.value)}
 					className='mt-1 w-fit border min-w-3xs border-gray-300 rounded-md py-2 focus:outline-none focus:ring focus:border-blue-300'
 				>
@@ -63,9 +133,25 @@ export default function ProgresionesForm() {
 			</div>
 			
 			<div className='mt-6 flex gap-4 items-center'>
-				<button onClick={() => setIsEditing(false)} className='font-semibold text-primary cursor-pointer transition-all hover:text-primary-focus hover:underline'>Cancelar</button>
-				<button className='bg-primary text-white font-medium px-5 py-2 rounded-4xl cursor-pointer hover:bg-primary-focus transition-all disabled:bg-primary-faded disabled:cursor-default' disabled={Boolean(!selectedProgresion)} >Guardar</button>
+				<button
+					onClick={() => setIsEditing(false)}
+					disabled={isLoading}
+					className='font-semibold text-primary cursor-pointer transition-all hover:text-primary-focus hover:underline'
+				>Cancelar</button>
+				<button
+					className='bg-primary text-white font-medium px-5 py-2 rounded-4xl cursor-pointer hover:bg-primary-focus transition-all disabled:bg-primary-faded disabled:cursor-default'
+					disabled={Boolean(!selectedProgresion) || isLoading}
+					onClick={handleProgresionUpdate}
+				>{isLoading ? <Spinner styles={{
+					width: '20px',
+					height: '20px',
+					border: 'solid 2px rgba(0,0,0,0.1)',
+					borderLeftColor: '#fff'
+				}} /> : 'Guardar'}</button>
 			</div>
+			{formStatus.error && <>
+				<p className='text-red-500 mt-4'>{formStatus.message}</p>
+			</>}
 		</>
 		}
 		</>

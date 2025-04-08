@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { Beneficiario, supabase } from './supabase';
 
 export async function getBeneficiarios() {
   const { data, error } = await supabase.from('beneficiarios').select(
@@ -36,6 +36,18 @@ export async function getProgresiones() {
 		*
 	  `
   );
+
+  if (error) throw error;
+  return data;
+}
+
+export async function updateBeneficiario(beneficiario: Beneficiario) {
+  const { data, error } = await supabase
+    .from('beneficiarios')
+    .update(beneficiario)
+    .eq('id', beneficiario.id)
+    .select()
+    .single();
 
   if (error) throw error;
   return data;
