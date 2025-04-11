@@ -4,9 +4,24 @@ import { useEffect, useMemo, useState } from "react"
 import { getProgresiones } from "@/lib/api";
 import styles from './styles.module.css'
 
+interface BeneficiarioFormInput {
+    nombre: string,
+    nacimiento: string,
+    genero: string,
+    rama: string | number,
+    progresion: string | number
+}
+
 export default function NewBeneficiario() {
     const [showModal, setShowModal] = useState(false);
 	const [progresiones, setProgresiones] = useState<any[]>([]);
+    const [formData, setFormData] = useState<BeneficiarioFormInput>({
+        nombre:'',
+        nacimiento:'',
+        genero:'',
+        rama:'',
+        progresion: ''
+    })
 
     useEffect(() => {
         getProgresiones().then(res => {
@@ -15,10 +30,25 @@ export default function NewBeneficiario() {
     }, []);
     
     const filteredProgresiones = useMemo(() => {
-        return progresiones;
-        /* if (!rama || rama === '' || rama === '...') return progresiones;
-        return progresiones.filter(progresion => progresion.id_rama == rama); */
-    }, [progresiones]);
+        if (!formData.rama || formData.rama === '' || formData.rama === '...') return progresiones;
+        return progresiones.filter(progresion => progresion.id_rama == formData.rama);
+    }, [progresiones, formData]);
+    
+    const handleChange = (ev: any) => {
+        const {
+            target: {
+                value,
+                name
+            }
+        } = ev;
+
+        setFormData({
+            ...formData,
+            [name]: value
+        })
+    }
+    
+    console.log('FORM DATA', formData);
     
     return (
         <>
@@ -40,6 +70,8 @@ export default function NewBeneficiario() {
                         type="text"
                         name="nombre"
                         id="nombre"
+                        value={formData.nombre}
+                        onChange={handleChange}
                         className="mt-1 border min-w-3xs border-gray-300 rounded-md py-1 px-1 focus:outline-none focus:ring focus:border-blue-300"
                     />
                 </div>
@@ -49,6 +81,8 @@ export default function NewBeneficiario() {
                         type="date"
                         name="nacimiento"
                         id="nacimiento"
+                        value={formData.nacimiento}
+                        onChange={handleChange}
                         className="mt-1 border min-w-3xs border-gray-300 rounded-md py-1 px-1 focus:outline-none focus:ring focus:border-blue-300"
                     />
                 </div>
@@ -57,6 +91,8 @@ export default function NewBeneficiario() {
                     <select
                         name="genero"
                         id="genero"
+                        value={formData.genero}
+                        onChange={handleChange}
                         className="mt-1 border min-w-3xs border-gray-300 rounded-md py-1 px-1 focus:outline-none focus:ring focus:border-blue-300"
                     >
                         <option>Masculino</option>
@@ -69,6 +105,8 @@ export default function NewBeneficiario() {
                     <select
                         name="rama"
                         id="rama"
+                        value={formData.rama}
+                        onChange={handleChange}
                         className='mt-1 w-fit border min-w-3xs border-gray-300 rounded-md py-2 focus:outline-none focus:ring focus:border-blue-300'
                     >
                         <option selected disabled>...</option>
@@ -84,6 +122,8 @@ export default function NewBeneficiario() {
                     <select
                         name="progresion"
                         id="progresion"
+                        value={formData.progresion}
+                        onChange={handleChange}
                         className='mt-1 w-fit border min-w-3xs border-gray-300 rounded-md py-2 focus:outline-none focus:ring focus:border-blue-300'
                     >
                         <option selected disabled>...</option>
