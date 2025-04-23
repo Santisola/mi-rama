@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useMemo, useState } from "react"
-import { getProgresiones } from "@/lib/api";
+import { FormEvent, useEffect, useMemo, useState } from "react"
+import { createBeneficiario, getProgresiones } from "@/lib/api";
 import styles from './styles.module.css'
 
 interface BeneficiarioFormInput {
@@ -48,7 +48,18 @@ export default function NewBeneficiario() {
         })
     }
     
-    console.log('FORM DATA', formData);
+    const handleSaveBeneficiario = async (ev:FormEvent<HTMLFormElement>) => {
+        ev.preventDefault();
+        console.log('FORM DATA', formData);
+
+        try {
+            const data = await createBeneficiario(formData);
+            console.log('EXITOOO', data)
+        } catch (e) {
+            console.error('Error guardando al beneficiario', e)
+        }
+    }
+    
     
     return (
         <>
@@ -63,7 +74,7 @@ export default function NewBeneficiario() {
         {showModal &&  
         <>
         <div className={`w-full max-w-[700px] absolute bg-white rounded-2xl p-4 z-50 ${styles.modal}`}>
-            <form action="#">
+            <form action="#" onSubmit={ev => handleSaveBeneficiario(ev)}>
                 <div className={`mb-4 ${styles.formGroup}`}>
                     <label htmlFor="nombre">Nombre</label>
                     <input
@@ -94,7 +105,8 @@ export default function NewBeneficiario() {
                         value={formData.genero}
                         onChange={handleChange}
                         className="mt-1 border min-w-3xs border-gray-300 rounded-md py-1 px-1 focus:outline-none focus:ring focus:border-blue-300"
-                    >
+                    >   
+                        <option selected>...</option>
                         <option>Masculino</option>
                         <option>Femenino</option>
                         <option value={0}>Yyy que se yo</option>
@@ -109,7 +121,7 @@ export default function NewBeneficiario() {
                         onChange={handleChange}
                         className='mt-1 w-fit border min-w-3xs border-gray-300 rounded-md py-2 focus:outline-none focus:ring focus:border-blue-300'
                     >
-                        <option selected disabled>...</option>
+                        <option selected>...</option>
                         <option value="1">Manada</option>
                         <option value="2">Unidad</option>
                         <option value="3">Caminantes</option>
@@ -126,11 +138,14 @@ export default function NewBeneficiario() {
                         onChange={handleChange}
                         className='mt-1 w-fit border min-w-3xs border-gray-300 rounded-md py-2 focus:outline-none focus:ring focus:border-blue-300'
                     >
-                        <option selected disabled>...</option>
+                        <option selected>...</option>
                         {filteredProgresiones.map((progresion, i) => (
                             <option key={i} value={progresion.id}>{progresion.nombre}</option>
                         ))}
                     </select>
+                </div>
+                <div className="flex justify-end">
+                    <button className="bg-primary text-white font-medium px-5 py-2 rounded-4xl cursor-pointer hover:bg-primary-focus transition-all disabled:bg-primary-faded disabled:cursor-default">Guardar</button>
                 </div>
             </form>
         </div>

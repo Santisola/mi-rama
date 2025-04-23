@@ -52,3 +52,33 @@ export async function updateBeneficiario(beneficiario: Beneficiario) {
   if (error) throw error;
   return data;
 }
+
+export async function createBeneficiario(
+  {
+    nombre,
+    nacimiento,
+    genero,
+    ...beneficiario
+  }: {
+    nombre: string,
+    nacimiento: string,
+    genero: string,
+    rama: string | number,
+    progresion: string | number
+}
+) {
+  const { data, error } = await supabase
+    .from('beneficiarios')
+    .insert({
+      nombre,
+      nacimiento,
+      genero,
+      id_rama: beneficiario.rama,
+      id_progresion: beneficiario.progresion
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
