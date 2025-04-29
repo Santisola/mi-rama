@@ -12,9 +12,20 @@ interface BeneficiarioFormInput {
     progresion: string | number
 }
 
+interface FormStatus {
+    error: boolean,
+    message: string | null,
+    loading: boolean
+}
+
 export default function NewBeneficiario() {
     const [showModal, setShowModal] = useState(false);
 	const [progresiones, setProgresiones] = useState<any[]>([]);
+    const [formState, setFormState] = useState<FormStatus>({
+        error: false,
+        message: null,
+        loading: false
+    })
     const [formData, setFormData] = useState<BeneficiarioFormInput>({
         nombre:'',
         nacimiento:'',
