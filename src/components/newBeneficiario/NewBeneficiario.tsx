@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useMemo, useState } from "react"
 import { createBeneficiario, getProgresiones } from "@/lib/api";
 import styles from './styles.module.css'
 import Spinner from '../spinner/Spinner';
+import { Beneficiario } from '@/lib/supabase';
 
 interface BeneficiarioFormInput {
     nombre: string,
@@ -19,7 +20,7 @@ interface FormStatus {
     loading: boolean
 }
 
-export default function NewBeneficiario() {
+export default function NewBeneficiario({ onCreate }: { onCreate: (beneficiario: Beneficiario) => void}) {
     const [showModal, setShowModal] = useState(false);
 	const [progresiones, setProgresiones] = useState<any[]>([]);
     const [formState, setFormState] = useState<FormStatus>({
@@ -61,6 +62,66 @@ export default function NewBeneficiario() {
             }
         } = ev;
 
+        const errors: any = {};
+        
+        if(name === 'nombre') {
+            if (value !== '') {
+                setErrors({ ...errors, nombre: '' })
+            } else {
+                errors.nombre = 'El nombre es requerido';
+            };
+        }
+        if(name === 'nacimiento') {
+            if (value !== '') {
+                setErrors({ ...errors, nacimiento: '' })
+            } else {
+                errors.nacimiento = 'La fecha de nacimiento es requerida';
+            };
+        }
+        if(name === 'genero') {
+            if (value !== '') {
+                setErrors({ ...errors, genero: '' })
+            } else {
+                errors.genero = 'El género es requerido';
+            };
+        }
+        if(name === 'rama') {
+            if (value !== '' && value !== '...') {
+                setErrors({ ...errors, rama: '' })
+            } else {
+                errors.rama = 'La rama es requerida';
+            };
+        }
+        if(name === 'progresion') {
+            if (value !== '' && value !== '...') {
+                setErrors({ ...errors, progresion: '' })
+            } else {
+                errors.progresion = 'La progresión es requerida';
+            };
+        }
+        
+        if (Object.keys(errors).length > 0) {
+            setErrors(errors);
+            setFormState({
+                error: true,
+                message: null,
+                loading: false
+            })
+        } else {
+            setErrors({
+                nombre: '',
+                nacimiento: '',
+                genero: '',
+                rama: '',
+                progresion: ''
+            });
+            setFormState({
+                error: false,
+                message: null,
+                loading: false
+            })
+        }
+
         setFormData({
             ...formData,
             [name]: value
@@ -74,7 +135,6 @@ export default function NewBeneficiario() {
             message: null,
             loading: true
         })
-        console.log('FORM DATA', formData);
 
         const errors: any = {};
 
@@ -102,17 +162,34 @@ export default function NewBeneficiario() {
             setErrors(errors);
             setFormState({
                 error: true,
-                message: 'Hay errores en el formulario',
+                message: null,
                 loading: false
-            })
+            });
             return;
         }
 
         try {
             const data = await createBeneficiario(formData);
-            console.log('EXITOOO', data)
+            onCreate(data);
+            setFormData({
+                nombre: '',
+                nacimiento: '',
+                genero: '',
+                rama: '',
+                progresion: ''
+            });
+            setFormState({
+                error: false,
+                message: '¡Protagonista guardado con éxito!',
+                loading: false
+            });
         } catch (e) {
-            console.error('Error guardando al beneficiario', e)
+            console.error('Error guardando al beneficiario', e);
+            setFormState({
+                error: true,
+                message: 'Oops! Ocurrió un error al guardar el protagonista, por favor intenta nuevamente.',
+                loading: false
+            });
         }
     }
     
@@ -216,8 +293,11 @@ export default function NewBeneficiario() {
                         {errors.progresion && <p className='text-red-500 text-sm mt-1'>{errors.progresion}</p>}
                     </div>
                     <div className="flex justify-end">
-                        <button className="bg-primary text-white font-medium px-5 py-2 rounded-4xl cursor-pointer hover:bg-primary-focus transition-all disabled:bg-primary-faded disabled:cursor-default">Guardar</button>
+                        <button className="bg-primary text-white font-medium px-5 py-2 rounded-4xl cursor-pointer hover:bg-primary-focus transition-all disabled:bg-primary-faded disabled:cursor-default" disabled={formState.error}>Guardar</button>
                     </div>
+                    {
+                        formState.message && <p className={`text-sm font-bold mt-3 text-center px-2 py-3 rounded-md ${formState.error ? 'bg-red-300 text-red-800' : 'bg-green-300 text-green-800'}`}>{formState.message}</p>
+                    }
                 </form>
             </div>
         </div>
