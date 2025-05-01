@@ -94,7 +94,7 @@ export default function ProgresionesForm({protagonista}: {protagonista: Benefici
 		<button
 			onClick={() => setIsEditing(true)}
 			className='mt-4 font-semibold text-primary cursor-pointer transition-all hover:text-primary-focus hover:underline'
-		>Cambiar Progresion</button>
+		>Cambiar Progresion / Rama</button>
 		}
 		
 		{(isEditing && progresiones.length > 0) &&
