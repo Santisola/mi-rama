@@ -1,7 +1,7 @@
 import {
-	SignedIn,
-	UserButton,
+	SignedIn
 } from '@clerk/nextjs';
+import UserInfo from './components/UserInfo';
 
 export default function Header() {
   return (
@@ -12,7 +12,7 @@ export default function Header() {
 				<p className='italic text-xs'>Realizá el seguimiento de la progresión personal y el desarrollo de protagonistas</p>
 			</div>
 			<SignedIn>
-				<UserButton />
+				<UserInfo />
 			</SignedIn>
 		</div>
 	</header>
