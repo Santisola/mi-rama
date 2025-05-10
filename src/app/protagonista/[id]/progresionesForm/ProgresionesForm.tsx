@@ -66,7 +66,8 @@ export default function ProgresionesForm({protagonista}: {protagonista: Benefici
 				nacimiento: protagonista.nacimiento,
 				genero: protagonista.genero,
 				id_rama: selectedRamaId,
-				id_progresion: selectedProgresionId
+				id_progresion: selectedProgresionId,
+				fecha_cambio_progresion: (new Date()).toLocaleDateString()
 			}
 		
 			const newPibe = await updateBeneficiario(data);

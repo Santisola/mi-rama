@@ -1,9 +1,16 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import { NextResponse } from 'next/server';
 
 const isProtectedRoute = createRouteMatcher(['/protagonista(.*)']);
 
 export default clerkMiddleware(async (auth, req) => {
-  if (isProtectedRoute(req)) await auth.protect();
+  if (
+    isProtectedRoute(req) &&
+    (await auth()).sessionClaims?.metadata?.role !== 'admin'
+  ) {
+    const url = new URL('/sin-acceso', req.url);
+    return NextResponse.redirect(url);
+  }
 });
 
 export const config = {

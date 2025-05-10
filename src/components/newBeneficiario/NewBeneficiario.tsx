@@ -169,7 +169,11 @@ export default function NewBeneficiario({ onCreate }: { onCreate: (beneficiario:
         }
 
         try {
-            const data = await createBeneficiario(formData);
+            const payload = {
+                ...formData,
+				fecha_cambio_progresion: (new Date()).toLocaleDateString()
+            }
+            const data = await createBeneficiario(payload);
             onCreate(data);
             setFormData({
                 nombre: '',

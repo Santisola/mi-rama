@@ -4,6 +4,21 @@ import { Beneficiario } from '@/lib/supabase';
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react';
 
+const getRamaClasses = (ramaId : string | number) => {
+	switch (ramaId) {
+		case 1:
+			return 'bg-amber-400 text-white font-semibold';
+		case 2:
+			return 'bg-green-700 text-white font-semibold';
+		case 3:
+			return 'bg-blue-800 text-white font-semibold';
+		case 4:
+			return 'bg-red-700 text-white font-semibold';
+		default:
+			return '';
+	}
+}
+
 export default function BeneficiariosTable({beneficiarios}: {beneficiarios: Beneficiario[]}) {
 	const [beneficiariosToList, setBeneficiariosToList] = useState<Beneficiario[]>([...beneficiarios]);
 	const [filteredByRama, setFilteredByRama] = useState<Beneficiario[]>([...beneficiarios]);
@@ -113,20 +128,22 @@ export default function BeneficiariosTable({beneficiarios}: {beneficiarios: Bene
 			<thead className="text-xs text-gray-700 uppercase bg-primary-faded">
 			<tr>
 				<th scope="col" className="px-6 py-3">Nombre</th>
-				<th scope="col" className="px-6 py-3">Fecha de nacimiento</th>
 				<th scope="col" className="px-6 py-3">Rama</th>
 				<th scope="col" className="px-6 py-3">Progresión</th>
+				<th scope="col" className="px-6 py-3">Ultimo cambio de progresión</th>
 			</tr>
 			</thead>
 			<tbody>
 			{displayedBeneficiarios.map((beneficiario) => (
 				<tr key={beneficiario.id} className="bg-white border-b border-gray-300 transition-all hover:bg-gray-50 cursor-pointer" onClick={() => router.push(`/protagonista/${beneficiario.id}`)}>
 				<td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-					{beneficiario.nombre}
+					{beneficiario.nombre} <br /> <small>{beneficiario.nacimiento}</small>
 				</td>
-				<td className="px-6 py-4">{beneficiario.nacimiento}</td>
-				<td className="px-6 py-4">{beneficiario.ramas?.nombre || '-'}</td>
+				<td className={`px-6 py-4`}>
+					<strong className={`rounded-4xl py-1 px-2 ${getRamaClasses(beneficiario.id_rama)}`}>{beneficiario.ramas?.nombre || '-'}</strong>
+				</td>
 				<td className="px-6 py-4">{beneficiario.progresiones?.nombre || '-'}</td>
+				<td className="px-6 py-4">{beneficiario.fecha_cambio_progresion || '-'}</td>
 				</tr>
 			))}
 			{displayedBeneficiarios.length === 0 && (

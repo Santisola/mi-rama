@@ -33,4 +33,5 @@ export type Beneficiario = {
   created_at?: string;
   ramas?: Rama;
   progresiones?: Progresion;
+  fecha_cambio_progresion: string | null;
 };
