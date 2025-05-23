@@ -20,7 +20,15 @@ interface FormStatus {
     loading: boolean
 }
 
-export default function NewBeneficiario({ onCreate }: { onCreate: (beneficiario: Beneficiario) => void}) {
+export default function NewBeneficiario({ 
+    onCreate,
+    onEdit,
+    editingBeneficiario = null
+}: {
+    onCreate?: (beneficiario: Beneficiario) => void,
+    onEdit?: (beneficiario: Beneficiario) => void,
+    editingBeneficiario?: Beneficiario | null
+}) {
     const [showModal, setShowModal] = useState(false);
 	const [progresiones, setProgresiones] = useState<any[]>([]);
     const [formState, setFormState] = useState<FormStatus>({
@@ -29,11 +37,11 @@ export default function NewBeneficiario({ onCreate }: { onCreate: (beneficiario:
         loading: false
     })
     const [formData, setFormData] = useState<BeneficiarioFormInput>({
-        nombre: '',
-        nacimiento: '',
-        genero: '',
-        rama: '',
-        progresion: ''
+        nombre: editingBeneficiario?.nombre || '',
+        nacimiento: editingBeneficiario?.nacimiento ||  '',
+        genero: editingBeneficiario?.genero ||  '',
+        rama: editingBeneficiario?.id_rama ||  '',
+        progresion: editingBeneficiario?.id_progresion ||  ''
     })
     const [errors, setErrors] = useState<any>({
         nombre: '',
@@ -174,7 +182,7 @@ export default function NewBeneficiario({ onCreate }: { onCreate: (beneficiario:
 				fecha_cambio_progresion: (new Date()).toLocaleDateString()
             }
             const data = await createBeneficiario(payload);
-            onCreate(data);
+            onCreate && onCreate(data);
             setFormData({
                 nombre: '',
                 nacimiento: '',
