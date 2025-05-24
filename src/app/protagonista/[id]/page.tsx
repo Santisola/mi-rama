@@ -15,6 +15,8 @@ export default async function Page({
 		nacimiento,
 		...rest
 	} = await getBeneficiario(id);
+
+	// Add isEditing state, use BeneficiariosForm component on pop up
 	
 	return (
 	<article>
