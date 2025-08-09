@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import Header from '@/components/header/Header';
 import Footer from '@/components/footer/Footer';
-import { ClerkProvider } from '@clerk/nextjs'
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -20,7 +19,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
       <html lang="es">
         <body
           className={`${montserrat.className} antialiased`}
@@ -30,6 +28,5 @@ export default function RootLayout({
           <Footer />
         </body>
       </html>
-    </ClerkProvider>
   );
 }

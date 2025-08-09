@@ -1,9 +1,4 @@
-import {
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  SignUpButton
-} from '@clerk/nextjs';
+import LoginForm from '@/components/loginForm/LoginForm';
 import Link from 'next/link';
 
 export default async function Home() {
@@ -12,7 +7,9 @@ export default async function Home() {
         <h2 className='text-3xl'>Gestion de mi rama</h2>
         <p>¡Accedé al sistema para llevar la gestión de la progresion personal y el estado de tu rama!</p>
         
-        <SignedIn>
+        <LoginForm />
+        
+        {/* <SignedIn>
           <Link href={'/protagonistas'} className='block w-fit mt-6 bg-primary text-white font-medium px-5 py-2 rounded-4xl cursor-pointer hover:bg-primary-focus transition-all'>Ver protagonistas</Link>
         </SignedIn>
 
@@ -31,7 +28,7 @@ export default async function Home() {
             <button className='font-bold text-primary hover:text-primary-focus cursor-pointer'>¡Registrate!</button>
           </SignUpButton>
           </p>
-        </SignedOut>
+        </SignedOut> */}
     </main>
   );
 }
