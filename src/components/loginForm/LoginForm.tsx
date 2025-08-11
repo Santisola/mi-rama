@@ -1,6 +1,5 @@
 'use client';
 import { useState } from "react";
-import styles from './styles.module.css'
 import { EyeClosed, EyeIcon } from "lucide-react";
 import { signInWithEmail } from "@/lib/auth";
 
@@ -23,7 +22,7 @@ export default function LoginForm() {
     };
     
     return (
-        <form action="#" className={`${styles.loginForm} max-w-72`} onSubmit={handleSubmit}>
+        <form action="#" className={`max-w-72`} onSubmit={handleSubmit}>
             <div className="form-group mb-4 mt-4">
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                 <input
@@ -48,7 +47,7 @@ export default function LoginForm() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
-                    <button onClick={(ev) => {ev.preventDefault();setSeePassword(!seePassword)}} className="absolute right-2 top-1/6 cursor-pointer">
+                    <button onClick={(ev) => {ev.preventDefault();setSeePassword(!seePassword)}} className={`absolute right-2 cursor-pointer top-1/2 -translate-y-1/2`}>
                         {
                             seePassword ?
                             <EyeClosed width={20} />

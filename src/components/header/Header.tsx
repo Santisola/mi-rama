@@ -1,3 +1,5 @@
+import UserButton from "./components/UserButton/UserButton";
+
 export default function Header() {
   return (
 	<header className='bg-primary text-white py-2'>
@@ -6,6 +8,8 @@ export default function Header() {
 				<h1 className='font-bold text-2xl'>Mi Rama</h1>
 				<p className='italic text-xs'>Realizá el seguimiento de la progresión personal y el desarrollo de protagonistas</p>
 			</div>
+			
+			<UserButton />
 		</div>
 	</header>
   )
