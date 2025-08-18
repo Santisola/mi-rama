@@ -1,17 +1,17 @@
 import { getCurrentUserProfile } from '@/lib/auth'
-import { cookies } from 'next/headers';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createServerSupabaseClient } from '@/lib/supabase-server';
+import styles from './UserButton.module.css';
 
 export default async function UserButton() {
-    const supabase = createServerComponentClient({ cookies });
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    const supabase = createServerSupabaseClient();
 
-    console.log('USER', user);
-
-    const profile = user ? await getCurrentUserProfile(supabase, user.id) : null;
+    const profile = await getCurrentUserProfile(supabase);
     
     console.log('PROFILE', profile);
     return (
-        <div>{profile?.name || user?.email}</div>
+        <button className={`${styles.userButton} flex`}>
+            {profile?.name || profile?.email} <span>{profile?.name ?
+            profile.name.charAt(0).toUpperCase() : profile?.email?.charAt(0).toUpperCase()}</span>
+        </button>
     )
 }
