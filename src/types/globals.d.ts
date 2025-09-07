@@ -13,4 +13,16 @@ declare global {
       role?: Roles
     }
   }
+
+  interface Profile {
+    id: string,
+    name: string | null,
+    created_at: string,
+    id_rama: number | null,
+    ramas: {
+        id: number,
+        nombre: string
+    } | null | undefined,
+    email: string
+}
 }

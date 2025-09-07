@@ -36,6 +36,16 @@ export async function signUpNewUser({email, password}: {email: string, password:
     }
 }
 
+export async function signOut() {
+  try {
+    const { error } = await supabaseAuth.auth.signOut();
+    if (error) throw error;
+  } catch (error) {
+    console.error('Error cerrando sesión!', error); 
+    return { error: 'Error cerrando sesión. Por favor, intente nuevamente.' };
+  }
+}
+
 export async function getCurrentUser(supabase: SupabaseClient<Database>) {
   const { data: { user }, error } = await supabase.auth.getUser();
   if (error) throw error;
@@ -62,7 +72,7 @@ export async function getCurrentUserProfile(
     return {
       ...data,
       email: user.email
-    };
+    } as Profile;
   } catch (err: any) {
     console.error('Error obteniendo el perfil:', err.message)
     return null

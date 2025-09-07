@@ -35,7 +35,7 @@ export function useUserProfile(): UseUserProfileResult {
         }
 
         // Obtener perfil relacionado
-        const currentProfile = await getCurrentUserProfile(supabase, currentUser.id);
+        const currentProfile = await getCurrentUserProfile(supabase);
         setProfile(currentProfile);
       } catch (err: any) {
         setError(err.message || 'Error desconocido');
