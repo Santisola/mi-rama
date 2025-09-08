@@ -5,28 +5,19 @@ import { createBrowserSupabaseClientInstance } from '@/lib/supabase-browser';
 import { useEffect, useState } from 'react';
 import styles from './UserButton.module.css';
 import { redirect } from 'next/navigation';
+import { useUser } from '@/context/UserContext';
 
 export default function UserButton() {
-    const [profile, setProfile] = useState<Profile | null>(null)
+    const { profile } = useUser();
     const [isOverlayOpen, setIsOverlayOpen] = useState(false);
     
-    useEffect(() => {
-        const getProfile = async () => {
-            const supabase = createBrowserSupabaseClientInstance();
-        
-            const profile = await getCurrentUserProfile(supabase);
-            setProfile(profile);
-        }
-    
-        getProfile()
-    }, []);
 
     const handleLogout = async () => {
+        setIsOverlayOpen(false);
         await signOut();
-        setProfile(null);
         redirect('/');
     }
-    console.log('PROFILE', profile);
+
     if(!profile) return null;
     
     return (
