@@ -69,14 +69,14 @@ export default function LoginForm() {
                         disabled={status.loading}
                         onChange={(e) => setPassword(e.target.value)}
                     />
-                    <button onClick={(ev) => {ev.preventDefault();setSeePassword(!seePassword)}} className={`absolute right-2 cursor-pointer top-1/2 -translate-y-1/2`}>
+                    <span onClick={(ev) => {ev.preventDefault();setSeePassword(!seePassword)}} className={`absolute right-2 cursor-pointer top-1/2 -translate-y-1/2`}>
                         {
                             seePassword ?
                             <EyeClosed width={20} />
                             :
                             <EyeIcon width={20} />
                         }
-                    </button>
+                    </span>
                 </div>
             </div>
             <button type="submit" className="btn mt-4 bg-primary text-white font-medium px-5 py-2 rounded-4xl cursor-pointer hover:bg-primary-focus transition-all">

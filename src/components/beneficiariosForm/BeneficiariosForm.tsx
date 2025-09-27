@@ -1,15 +1,7 @@
-import { getProgresiones } from '@/lib/api';
-import { Beneficiario } from '@/lib/supabase';
 import React, { FormEvent, useEffect, useMemo, useState } from 'react'
-
-interface BeneficiarioFormInput {
-    nombre: string,
-    nacimiento: string,
-    genero: string,
-    rama: string | number,
-    progresion: string | number,
-    fecha_cambio_progresion?: string
-}
+import { getProgresiones } from '@/lib/api';
+import { Beneficiario, BeneficiarioFormInput } from '@/lib/supabase';
+import styles from '../newBeneficiario/styles.module.css'
 
 interface FormStatus {
     error: boolean,
@@ -20,7 +12,6 @@ interface FormStatus {
 export default function BeneficiariosForm({
     beneficiario = null,
     beneficiarioCallback,
-    styles
 }: {
     beneficiario?: Beneficiario | null,
     beneficiarioCallback: (payload: BeneficiarioFormInput) => any

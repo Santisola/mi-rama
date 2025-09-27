@@ -1,11 +1,10 @@
 'use client';
 
-import { getCurrentUserProfile, signOut } from '@/lib/auth'
-import { createBrowserSupabaseClientInstance } from '@/lib/supabase-browser';
-import { useEffect, useState } from 'react';
-import styles from './UserButton.module.css';
+import { signOut } from '@/lib/auth'
+import { useState } from 'react';
 import { redirect } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
+import styles from './UserButton.module.css';
 
 export default function UserButton() {
     const { profile } = useUser();

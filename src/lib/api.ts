@@ -1,4 +1,4 @@
-import { Beneficiario, supabase } from './supabase';
+import { Beneficiario, BeneficiarioFormInput, supabase } from './supabase';
 
 export async function getBeneficiarios() {
   const { data, error } = await supabase.from('beneficiarios').select(
@@ -41,12 +41,16 @@ export async function getProgresiones() {
   return data;
 }
 
-export async function updateBeneficiario(beneficiario: Beneficiario) {
+export async function updateBeneficiario(beneficiario: Beneficiario | BeneficiarioFormInput) {
   const { data, error } = await supabase
     .from('beneficiarios')
     .update(beneficiario)
     .eq('id', beneficiario.id)
-    .select()
+    .select(`
+      *,
+      ramas:id_rama(id, nombre),
+      progresiones:id_progresion(id, nombre)
+    `)
     .single();
 
   if (error) throw error;

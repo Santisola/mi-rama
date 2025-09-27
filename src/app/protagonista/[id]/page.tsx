@@ -3,6 +3,7 @@ import ProgresionesForm from './progresionesForm/ProgresionesForm';
 import { getBeneficiario } from '@/lib/api';
 import { ChevronLeft } from 'lucide-react';
 import styles from './styles.module.css'
+import EditProtagonista from './editProtagonista/EditProtagonista';
 
 export default async function Page({
 	params,
@@ -25,7 +26,15 @@ export default async function Page({
 			<strong className='text-white bg-primary px-3 py-1 rounded-4xl text-sm'>{rest.ramas?.nombre || '-'}</strong>
 			<h2 className='text-4xl font-medium mt-2 mb-1'>{nombre}</h2>
 			<p className='text-sm mb-2'>{nacimiento}</p>
-			<button className={`mb-8 cursor-pointer text-sm font-semibold ${styles.editButton}`}>Editar datos</button>
+			
+			<EditProtagonista beneficiario={
+				{
+					nombre,
+					nacimiento,
+					...rest
+				}
+			} />
+			
 			<p>Progresion actual: <strong>{rest.progresiones?.nombre || '-'}</strong></p>
 
 			<ProgresionesForm

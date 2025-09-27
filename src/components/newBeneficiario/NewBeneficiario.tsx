@@ -65,7 +65,6 @@ export default function NewBeneficiario({
                 
                 <BeneficiariosForm
                     beneficiarioCallback={handleSaveBeneficiario}
-                    styles={styles}
                 />
             </div>
         </div>
