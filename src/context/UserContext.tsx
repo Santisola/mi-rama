@@ -65,8 +65,6 @@ export const UserProvider = ({ children }: {children: ReactNode}) => {
         getProfile()
     }, [ session ]);
 
-    console.log('CONTEXT SESSION', {session, profile});
-
     return (
         <UserContext.Provider value={{
             session,

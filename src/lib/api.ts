@@ -1,4 +1,4 @@
-import { Beneficiario, BeneficiarioFormInput, supabase } from './supabase';
+import { Beneficiario, BeneficiarioFormInput, supabase, supabaseAuth } from './supabase';
 
 export async function getBeneficiarios() {
   const { data, error } = await supabase.from('beneficiarios').select(
@@ -41,10 +41,20 @@ export async function getProgresiones() {
   return data;
 }
 
-export async function updateBeneficiario(beneficiario: Beneficiario | BeneficiarioFormInput) {
-  const { data, error } = await supabase
+export async function updateBeneficiario(beneficiario: BeneficiarioFormInput) {
+  const payload = {
+    nombre: beneficiario.nombre,
+    nacimiento: beneficiario.nacimiento,
+    genero: beneficiario.genero,
+    id_rama: beneficiario.rama,
+    id_progresion: beneficiario.progresion,
+    fecha_cambio_progresion: beneficiario.fecha_cambio_progresion,
+    id: beneficiario.id,
+  }
+  
+  const { data, error } = await supabaseAuth
     .from('beneficiarios')
-    .update(beneficiario)
+    .update(payload)
     .eq('id', beneficiario.id)
     .select(`
       *,
@@ -52,7 +62,7 @@ export async function updateBeneficiario(beneficiario: Beneficiario | Beneficiar
       progresiones:id_progresion(id, nombre)
     `)
     .single();
-
+    
   if (error) throw error;
   return data;
 }
@@ -89,4 +99,14 @@ export async function createBeneficiario({
 
   if (error) throw error;
   return data;
+}
+
+export async function deleteBeneficiario(id: number | string) {
+  const { error } = await supabaseAuth
+    .from('beneficiarios')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw error;
+  return { success: true };
 }

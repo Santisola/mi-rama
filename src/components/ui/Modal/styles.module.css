@@ -1,0 +1,7 @@
+.modal {
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+    max-height: 90dvh;
+    overflow: auto;
+}

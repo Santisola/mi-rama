@@ -14,7 +14,7 @@ export default function BeneficiariosForm({
     beneficiarioCallback,
 }: {
     beneficiario?: Beneficiario | null,
-    beneficiarioCallback: (payload: BeneficiarioFormInput) => any
+    beneficiarioCallback: (payload: any) => any
     styles?: any
 }) {
     const [formData, setFormData] = useState<BeneficiarioFormInput>({
@@ -274,7 +274,7 @@ export default function BeneficiariosForm({
                 {errors.progresion && <p className='text-red-500 text-sm mt-1'>{errors.progresion}</p>}
             </div>
             <div className="flex justify-end">
-                <button className="bg-primary text-white font-medium px-5 py-2 rounded-4xl cursor-pointer hover:bg-primary-focus transition-all disabled:bg-primary-faded disabled:cursor-default" disabled={formState.error}>Guardar</button>
+                <button className="bg-primary text-white font-medium px-5 py-2 rounded-4xl cursor-pointer hover:bg-primary-focus transition-all disabled:bg-primary-faded disabled:cursor-default" disabled={formState.loading}>Guardar</button>
             </div>
             {
                 formState.message && <p className={`text-sm font-bold mt-3 text-center px-2 py-3 rounded-md ${formState.error ? 'bg-red-300 text-red-800' : 'bg-green-300 text-green-800'}`}>{formState.message}</p>

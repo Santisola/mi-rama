@@ -6,7 +6,7 @@ import BeneficiariosForm from '@/components/beneficiariosForm/BeneficiariosForm'
 import { updateBeneficiario } from '@/lib/api';
 import Spinner from '@/components/spinner/Spinner';
 
-export default function EditProtagonista({beneficiario}: {beneficiario: Beneficiario}) {
+export default function EditProtagonista({beneficiario, onEdit}: {beneficiario: Beneficiario, onEdit?: () => void}) {
     const [isEditing, setIsEditing] = useState(false);
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
@@ -17,6 +17,8 @@ export default function EditProtagonista({beneficiario}: {beneficiario: Benefici
             const data = await updateBeneficiario(payload);
             console.log('RESPONSE', data);
             setIsLoading(false);
+            setIsEditing(false);
+            if (onEdit) onEdit();
             return {success: true};
         } catch (e) {
             console.log('ERROR Saving protagonista data', e);

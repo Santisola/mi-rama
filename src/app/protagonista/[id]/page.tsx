@@ -1,50 +1,13 @@
-import Link from 'next/link';
-import ProgresionesForm from './progresionesForm/ProgresionesForm';
-import { getBeneficiario } from '@/lib/api';
-import { ChevronLeft } from 'lucide-react';
-import styles from './styles.module.css'
-import EditProtagonista from './editProtagonista/EditProtagonista';
+import ViewProtagonista from "./ViewProtagonista";
+import { getBeneficiario } from "@/lib/api";
 
 export default async function Page({
-	params,
+  params,
 }: {
-	params: Promise<{ id: string }>
+  params: Promise<{ id: string }>;
 }) {
-	const { id } = await params;
-	const {
-		nombre,
-		nacimiento,
-		...rest
-	} = await getBeneficiario(id);
+  const { id } = await params;
+  const data = await getBeneficiario(id);
 
-	// Add isEditing state, use BeneficiariosForm component on pop up
-	
-	return (
-	<article>
-		<div className='container px-2 m-auto py-4'>
-			<Link href={'/protagonistas'} className='block mb-4 text-sm flex items-center font-medium'><ChevronLeft /> Volver</Link>
-			<strong className='text-white bg-primary px-3 py-1 rounded-4xl text-sm'>{rest.ramas?.nombre || '-'}</strong>
-			<h2 className='text-4xl font-medium mt-2 mb-1'>{nombre}</h2>
-			<p className='text-sm mb-2'>{nacimiento}</p>
-			
-			<EditProtagonista beneficiario={
-				{
-					nombre,
-					nacimiento,
-					...rest
-				}
-			} />
-			
-			<p>Progresion actual: <strong>{rest.progresiones?.nombre || '-'}</strong></p>
-
-			<ProgresionesForm
-				protagonista={{
-					nombre,
-					nacimiento,
-					...rest
-				}}
-			/>
-		</div>
-	</article>
-	)
+  return <ViewProtagonista id={id} initialData={data} />;
 }

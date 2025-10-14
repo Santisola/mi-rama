@@ -1,8 +1,11 @@
 'use client'
 import NewBeneficiario from '@/components/newBeneficiario/NewBeneficiario';
 import { Beneficiario } from '@/lib/supabase';
+import { SquarePen, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react';
+import Modal from '../ui/Modal/Modal';
+import { deleteBeneficiario, getBeneficiarios } from '@/lib/api';
 
 const getRamaClasses = (ramaId : string | number) => {
 	switch (ramaId) {
@@ -26,6 +29,10 @@ export default function BeneficiariosTable({beneficiarios}: {beneficiarios: Bene
 	const [selectedRama, setSelectedRama] = useState<string>('all');
 	const [searchTerm, setSearchTerm] = useState<string>('');
 	const [ramas, setRamas] = useState<{id: number, nombre: string}[]>([]);
+
+	const [protagonistaToDelete, setProtagonistaToDelete] = useState<null | Beneficiario>(null)
+	const [isDeleting, setIsDeleting] = useState(false)
+	const [deleteError, setDeleteError] = useState<null | string>(null)
 
 	const router = useRouter();
 
@@ -81,10 +88,29 @@ export default function BeneficiariosTable({beneficiarios}: {beneficiarios: Bene
 		setSearchTerm(e.target.value);
 	}
 
+	const handleDelete = async () => {
+		setDeleteError(null);
+		if (!protagonistaToDelete) return;
+		setIsDeleting(true);
+		const { nombre } = protagonistaToDelete
+		try {
+			await deleteBeneficiario(protagonistaToDelete.id);
+			// Refetch beneficiarios y actualiza el listado
+			const nuevos = await getBeneficiarios();
+			setBeneficiariosToList(nuevos);
+			setProtagonistaToDelete(null);
+		} catch (e) {
+			console.error('Error al borrar protagonista =>', e)
+			setDeleteError(`Oops! Ocurrió un error al intentar borrar a ${nombre}, por favor intentá de nuevo`);
+		} finally {
+			setIsDeleting(false);
+		}
+	}
+
 	return (
 	<>
 	<div className='flex justify-between items-center my-4'>
-        <h2 className='my-4 text-2xl'>Mi Rama wachi</h2>
+        <h2 className='my-4 text-2xl'>Protagonistas</h2>
         <NewBeneficiario onCreate={beneficiarioCreated} />
 	</div>
 	
@@ -131,12 +157,20 @@ export default function BeneficiariosTable({beneficiarios}: {beneficiarios: Bene
 				<th scope="col" className="px-6 py-3">Rama</th>
 				<th scope="col" className="px-6 py-3">Progresión</th>
 				<th scope="col" className="px-6 py-3">Ultimo cambio de progresión</th>
+				<th scope="col" className="px-6 py-3 flex items-center justify-center">.</th>
 			</tr>
 			</thead>
 			<tbody>
 			{displayedBeneficiarios.map((beneficiario) => (
-				<tr key={beneficiario.id} className="bg-white border-b border-gray-300 transition-all hover:bg-gray-50 cursor-pointer" onClick={() => router.push(`/protagonista/${beneficiario.id}`)}>
-				<td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+				<tr
+					key={beneficiario.id}
+					className="bg-white border-b border-gray-300"
+				>
+				<td
+					scope="row"
+					className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap cursor-pointer transition-all hover:bg-gray-50"
+					onClick={() => router.push(`/protagonista/${beneficiario.id}`)}
+				>
 					{beneficiario.nombre} <br /> <small>{beneficiario.nacimiento}</small>
 				</td>
 				<td className={`px-6 py-4`}>
@@ -144,6 +178,16 @@ export default function BeneficiariosTable({beneficiarios}: {beneficiarios: Bene
 				</td>
 				<td className="px-6 py-4">{beneficiario.progresiones?.nombre || '-'}</td>
 				<td className="px-6 py-4">{beneficiario.fecha_cambio_progresion || '-'}</td>
+				<td className="px-6 py-4">
+					<div className='flex items-stretch justify-center gap-2'>
+						<button className='block mt-0.5 cursor-pointer transition hover:text-primary' onClick={() => router.push(`/protagonista/${beneficiario.id}`)}>
+							<SquarePen size={20} />
+						</button>
+						<button className='block cursor-pointer transition hover:text-red-500' onClick={() => setProtagonistaToDelete(beneficiario)}>
+							<Trash2 size={20} />
+						</button>
+					</div>
+				</td>
 				</tr>
 			))}
 			{displayedBeneficiarios.length === 0 && (
@@ -156,6 +200,24 @@ export default function BeneficiariosTable({beneficiarios}: {beneficiarios: Bene
 			</tbody>
 		</table>
 	</div>
+	<Modal showModal={protagonistaToDelete !== null} closeModal={() => setProtagonistaToDelete(null)}>
+		<>
+		<h3 className='my-4 text-2xl'>Estas borrando a {protagonistaToDelete?.nombre}</h3>
+		<p>Esta acción es irreversible ¡No hay vuelta atrás!</p>
+		<div className="flex justify-end items-center gap-4 mt-7">
+			<button
+				onClick={() => setProtagonistaToDelete(null)}
+				disabled={isDeleting}
+				className='font-semibold text-gray-700 cursor-pointer transition-all hover:underline'
+			>Cancelar</button>
+			<button
+				onClick={() => handleDelete()}
+				className='bg-red-500 text-white font-medium px-5 py-2 rounded-4xl cursor-pointer'
+			>{isDeleting ? 'Borrando...' : `Borrar a ${protagonistaToDelete?.nombre}`}</button>
+		</div>
+		{deleteError && <p>{deleteError}</p>}
+		</>
+	</Modal>
 	</>
   )
 }

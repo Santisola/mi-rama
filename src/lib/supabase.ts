@@ -41,10 +41,10 @@ export type Beneficiario = {
 
 export type BeneficiarioFormInput = {
     id?: number,
-    nombre: string,
-    nacimiento: string,
-    genero: string,
-    rama: string | number,
-    progresion: string | number,
+    nombre?: string,
+    nacimiento?: string,
+    genero?: string,
+    rama?: string | number,
+    progresion?: string | number,
     fecha_cambio_progresion?: string
 }

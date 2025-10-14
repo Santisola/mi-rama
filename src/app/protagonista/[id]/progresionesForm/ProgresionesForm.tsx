@@ -10,7 +10,7 @@ interface FormStatus {
 	message: string;
 }
 
-export default function ProgresionesForm({protagonista}: {protagonista: Beneficiario}) {
+export default function ProgresionesForm({protagonista, onEdit}: {protagonista: Beneficiario, onEdit?: () => void}) {
 	const [progresiones, setProgresiones] = useState<any[]>([]);
 	const [rama, setRama] = useState<string>('');
 	const [selectedProgresion, setSelectedProgresion] = useState<string | null>()
@@ -61,12 +61,8 @@ export default function ProgresionesForm({protagonista}: {protagonista: Benefici
 			
 			const data = {
 				id: protagonista.id,
-				created_at: protagonista.created_at,
-				nombre: protagonista.nombre,
-				nacimiento: protagonista.nacimiento,
-				genero: protagonista.genero,
-				id_rama: selectedRamaId,
-				id_progresion: selectedProgresionId,
+				rama: selectedRamaId,
+				progresion: selectedProgresionId,
 				fecha_cambio_progresion: (new Date()).toLocaleDateString()
 			}
 		
@@ -77,8 +73,9 @@ export default function ProgresionesForm({protagonista}: {protagonista: Benefici
 				error: false,
 				message: ''
 			})
-			console.log('newPibe', newPibe);
-			location.reload()
+
+			if (onEdit) onEdit();
+			return;
 		} catch (error) {
 			console.log(error);
 			setFormStatus({
