@@ -2,6 +2,13 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/supabase';
 import { supabaseAuth, supabase } from './supabase';
 
+interface SignUpInput {
+  email: string;
+  password: string;
+  nombre: string;
+  rama: string | number;
+}
+
 export async function signInWithEmail({email, password}: {email: string, password: string}) {
     try {
         const { data, error } = await supabaseAuth.auth.signInWithPassword({
@@ -17,7 +24,7 @@ export async function signInWithEmail({email, password}: {email: string, passwor
     }
 }
 
-export async function signUpNewUser({email, password}: {email: string, password: string}) {
+export async function signUpNewUser({nombre, email, rama, password}: SignUpInput) {
     try {
         const { data, error } = await supabaseAuth.auth.signUp({
             email,
@@ -29,10 +36,31 @@ export async function signUpNewUser({email, password}: {email: string, password:
     
         if (error) throw error;
 
-        return data;
+        // Esperar a que el trigger cree el registro en `educadores`
+        const userId = data.user?.id;
+
+        if (userId) {
+          const { data, error: updateError } = await supabase
+            .from("educadores")
+            .update({
+              name: nombre,
+              id_rama: rama,
+            })
+            .eq("id", userId)
+            .select(`
+              *
+            `)
+
+          if (updateError) {
+            throw updateError;
+          }
+          return data;
+        }
+        
+        throw new Error('No se pudo obtener el ID del usuario después del registro.');
     } catch (error) {
         console.error('Error registrando usuario!', error);
-        return { error: 'Error registrando usuario. Por favor, intente nuevamente.' };
+        return { error: 'Error registrando usuario. Por favor, intente nuevamente.', log: error };
     }
 }
 

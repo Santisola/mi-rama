@@ -1,4 +1,5 @@
 import LoginForm from '@/components/loginForm/LoginForm';
+import SignupForm from '@/components/signupForm/SignupForm';
 import { createServerSupabaseClient } from '@/lib/supabase-server';
 import { redirect } from 'next/navigation';
 
@@ -18,6 +19,7 @@ export default async function Home() {
         <p>¡Accedé al sistema para llevar la gestión de la progresion personal y el estado de tu rama!</p>
         
         <LoginForm />
+        <SignupForm />
     </main>
   );
 }
