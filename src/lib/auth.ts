@@ -36,25 +36,28 @@ export async function signUpNewUser({nombre, email, rama, password}: SignUpInput
     
         if (error) throw error;
 
-        // Esperar a que el trigger cree el registro en `educadores`
         const userId = data.user?.id;
-
+        
         if (userId) {
-          const { data, error: updateError } = await supabase
+          // Inserta directamente en educadores
+          const { data: insertData, error: insertError } = await supabaseAuth
             .from("educadores")
-            .update({
+            .insert({
+              id: userId,
               name: nombre,
               id_rama: rama,
             })
-            .eq("id", userId)
             .select(`
-              *
+              *,
+              ramas:id_rama(id, nombre)
             `)
-
-          if (updateError) {
-            throw updateError;
+            .single();
+                    
+          if (insertError) {
+            throw insertError;
           }
-          return data;
+          
+          return insertData;
         }
         
         throw new Error('No se pudo obtener el ID del usuario después del registro.');

@@ -27,6 +27,7 @@ export default function SignupForm() {
         message: null,
         loading: false
     });
+    const [isServerError, setIsServerError] = useState(false);
     const [errors, setErrors] = useState<any>({
         nombre: '',
         email: '',
@@ -112,7 +113,8 @@ export default function SignupForm() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
+        setIsServerError(false);
+
         const errors: any = {};
 
         if (formData.nombre === '') {
@@ -175,6 +177,7 @@ export default function SignupForm() {
                 message: 'Error registrando usuario. Por favor, intente nuevamente.',
                 loading: false
             });
+            setIsServerError(true);
             return;
         }
     }
@@ -275,13 +278,13 @@ export default function SignupForm() {
                 <button
                     type="submit"
                     className="cursor-pointer bg-blue-600 text-white rounded px-4 py-2 mt-2 hover:bg-blue-700 transition disabled:bg-primary-faded disabled:cursor-default"
-                    disabled={formState.loading || formState.error}
+                    disabled={(formState.loading || formState.error) && !isServerError}
                 >
                     Enviar solicitud
                 </button>
             </form>
             {
-                formState.message && <p className={`text-sm font-bold mt-3 text-center px-2 py-3 rounded-md ${formState.error ? 'bg-red-300 text-red-800' : 'bg-green-300 text-green-800'}`}>{formState.message}</p>
+                formState.message && <p className={`text-sm font-bold mt-3 text-center px-2 py-3 rounded-md ${formState.error || isServerError ? 'bg-red-300 text-red-800' : 'bg-green-300 text-green-800'}`}>{formState.message}</p>
             }
         </Modal>
         </>

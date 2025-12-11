@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
+import { getCurrentUserProfile } from './lib/auth';
 
 const isProtectedRoute = (req: Request) => {
   const url = new URL(req.url);
@@ -16,6 +17,13 @@ export default async function middleware(req: any) {
   
   // Si la ruta es protegida y NO hay sesión, redirige
   if (isProtectedRoute(req) && !session) {
+    const url = new URL('/sin-acceso', req.url);
+    return NextResponse.redirect(url);
+  }
+
+  const profile = await getCurrentUserProfile(supabase);
+
+  if (isProtectedRoute(req) && (!profile || profile.approved === false)) {
     const url = new URL('/sin-acceso', req.url);
     return NextResponse.redirect(url);
   }

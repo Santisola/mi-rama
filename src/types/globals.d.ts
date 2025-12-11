@@ -15,6 +15,7 @@ declare global {
   }
 
   interface Profile {
+    approved: boolean
     id: string,
     name: string | null,
     created_at: string,
