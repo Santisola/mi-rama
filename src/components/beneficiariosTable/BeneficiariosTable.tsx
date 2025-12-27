@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react';
 import Modal from '../ui/Modal/Modal';
 import { deleteBeneficiario, getBeneficiarios } from '@/lib/api';
+import { useUser } from '@/context/UserContext';
+import PumaLoader from '../pumaLoader/PumaLoader';
 
 const getRamaClasses = (ramaId : string | number) => {
 	switch (ramaId) {
@@ -22,11 +24,11 @@ const getRamaClasses = (ramaId : string | number) => {
 	}
 }
 
-export default function BeneficiariosTable({beneficiarios}: {beneficiarios: Beneficiario[]}) {
+export default function BeneficiariosTable({beneficiarios, profile}: {beneficiarios: Beneficiario[], profile: Profile | null}) {
 	const [beneficiariosToList, setBeneficiariosToList] = useState<Beneficiario[]>([...beneficiarios]);
 	const [filteredByRama, setFilteredByRama] = useState<Beneficiario[]>([...beneficiarios]);
-	const [displayedBeneficiarios, setDisplayedBeneficiarios] = useState<Beneficiario[]>([...beneficiarios]);
-	const [selectedRama, setSelectedRama] = useState<string>('all');
+	const [displayedBeneficiarios, setDisplayedBeneficiarios] = useState<Beneficiario[] | null>(null);
+	const [selectedRama, setSelectedRama] = useState<string>(profile?.id_rama?.toString() || 'all');
 	const [searchTerm, setSearchTerm] = useState<string>('');
 	const [ramas, setRamas] = useState<{id: number, nombre: string}[]>([]);
 
@@ -48,11 +50,12 @@ export default function BeneficiariosTable({beneficiarios}: {beneficiarios: Bene
 			return acc;
 		}, [] as {id: number, nombre: string}[]);
 		
-		setRamas(uniqueRamas);
+		setRamas(uniqueRamas.sort((a, b) => a.id - b.id));
 	}, [beneficiariosToList]);
 
 	// Filter by rama
 	useEffect(() => {
+		console.log('Filtering by rama:', selectedRama);
 		if (selectedRama === 'all') {
 			setFilteredByRama(beneficiariosToList);
 		} else {
@@ -106,6 +109,8 @@ export default function BeneficiariosTable({beneficiarios}: {beneficiarios: Bene
 			setIsDeleting(false);
 		}
 	}
+
+	if (!displayedBeneficiarios) return <PumaLoader />;
 
 	return (
 	<>
