@@ -149,56 +149,63 @@ export default function BeneficiariosTable({beneficiarios}: {beneficiarios: Bene
 		</div>
 	</div>
 	
-	<div className='relative overflow-x-auto'>
-        <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-			<thead className="text-xs text-gray-700 uppercase bg-primary-faded">
-			<tr>
-				<th scope="col" className="px-6 py-3">Nombre</th>
-				<th scope="col" className="px-6 py-3">Rama</th>
-				<th scope="col" className="px-6 py-3">Progresión</th>
-				<th scope="col" className="px-6 py-3">Ultimo cambio de progresión</th>
-				<th scope="col" className="px-6 py-3 flex items-center justify-center">.</th>
-			</tr>
-			</thead>
-			<tbody>
-			{displayedBeneficiarios.map((beneficiario) => (
-				<tr
-					key={beneficiario.id}
-					className="bg-white border-b border-gray-300"
-				>
-				<td
-					scope="row"
-					className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap cursor-pointer transition-all hover:bg-gray-50"
-					onClick={() => router.push(`/protagonista/${beneficiario.id}`)}
-				>
-					{beneficiario.nombre} <br /> <small>{beneficiario.nacimiento}</small>
-				</td>
-				<td className={`px-6 py-4`}>
-					<strong className={`rounded-4xl py-1 px-2 ${getRamaClasses(beneficiario.id_rama)}`}>{beneficiario.ramas?.nombre || '-'}</strong>
-				</td>
-				<td className="px-6 py-4">{beneficiario.progresiones?.nombre || '-'}</td>
-				<td className="px-6 py-4">{beneficiario.fecha_cambio_progresion || '-'}</td>
-				<td className="px-6 py-4">
-					<div className='flex items-stretch justify-center gap-2'>
-						<button className='block mt-0.5 cursor-pointer transition hover:text-primary' onClick={() => router.push(`/protagonista/${beneficiario.id}`)}>
-							<SquarePen size={20} />
-						</button>
-						<button className='block cursor-pointer transition hover:text-red-500' onClick={() => setProtagonistaToDelete(beneficiario)}>
-							<Trash2 size={20} />
-						</button>
-					</div>
-				</td>
-				</tr>
-			))}
-			{displayedBeneficiarios.length === 0 && (
+	<div className='relative'>
+		<div className='overflow-x-auto'>
+			<div className='bg-white shadow-sm rounded-lg overflow-hidden'>
+				<table className="w-full text-sm text-left text-gray-600">
+				<thead className="bg-gradient-to-r from-primary/5 to-transparent">
 				<tr>
-					<td colSpan={4} className="px-6 py-4 text-center text-gray-500">
-						No se encontraron beneficiarios con los filtros aplicados
-					</td>
+					<th scope="col" className="px-4 py-3 text-left font-medium text-gray-700">Nombre</th>
+					<th scope="col" className="px-4 py-3 text-left font-medium text-gray-700">Rama</th>
+					<th scope="col" className="px-4 py-3 text-left font-medium text-gray-700">Progresión</th>
+					<th scope="col" className="px-4 py-3 text-left font-medium text-gray-700">Último cambio</th>
+					<th scope="col" className="px-4 py-3 text-center font-medium text-gray-700">Acciones</th>
 				</tr>
-			)}
-			</tbody>
-		</table>
+				</thead>
+				<tbody>
+				{displayedBeneficiarios.map((beneficiario, idx) => (
+					<tr
+						key={beneficiario.id}
+						className={`transition-colors duration-150 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-gray-100`}
+					>
+					<td
+						scope="row"
+						className="px-4 py-3 font-medium text-gray-900 cursor-pointer"
+						onClick={() => router.push(`/protagonista/${beneficiario.id}`)}
+					>
+						<div className='flex flex-col'>
+							<span className='text-gray-900'>{beneficiario.nombre}</span>
+							<small className='text-gray-500'>{beneficiario.nacimiento}</small>
+						</div>
+					</td>
+					<td className="px-4 py-3">
+						<strong className={`rounded-full py-1 px-3 text-xs ${getRamaClasses(beneficiario.id_rama)}`}>{beneficiario.ramas?.nombre || '-'}</strong>
+					</td>
+					<td className="px-4 py-3 text-sm text-gray-700">{beneficiario.progresiones?.nombre || '-'}</td>
+					<td className="px-4 py-3 text-sm text-gray-700">{beneficiario.fecha_cambio_progresion || '-'}</td>
+					<td className="px-4 py-3 text-center">
+						<div className='inline-flex items-center justify-center gap-2'>
+							<button className='cursor-pointer p-2 rounded-md hover:bg-primary/10 transition text-primary' onClick={() => router.push(`/protagonista/${beneficiario.id}`)} aria-label={`Editar ${beneficiario.nombre}`}>
+								<SquarePen size={18} />
+							</button>
+							<button className='cursor-pointer p-2 rounded-md hover:bg-red-50 transition text-red-500' onClick={() => setProtagonistaToDelete(beneficiario)} aria-label={`Eliminar ${beneficiario.nombre}`}>
+								<Trash2 size={18} />
+							</button>
+						</div>
+					</td>
+					</tr>
+				))}
+				{displayedBeneficiarios.length === 0 && (
+					<tr>
+						<td colSpan={5} className="px-4 py-6 text-center text-gray-500">
+							No se encontraron beneficiarios con los filtros aplicados
+						</td>
+					</tr>
+				)}
+				</tbody>
+				</table>
+			</div>
+		</div>
 	</div>
 	<Modal showModal={protagonistaToDelete !== null} closeModal={() => setProtagonistaToDelete(null)}>
 		<>

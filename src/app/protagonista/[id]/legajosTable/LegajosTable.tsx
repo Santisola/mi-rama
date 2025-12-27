@@ -63,7 +63,7 @@ export default function LegajosTable({ protagonistaLegajos, allLegajos, onSave }
                 <h3 id="legajos-heading" className={styles.title}>Legajos</h3>
                 <div className={styles.summary}>
                     <span className={styles.count}>{assignedCount}</span>
-                    <span className={styles.countLabel}>asignados / {items.length}</span>
+                    <span className={styles.countLabel}>entregados / {items.length}</span>
                 </div>
             </div>
 
