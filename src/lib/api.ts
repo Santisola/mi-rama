@@ -145,3 +145,41 @@ export async function deleteBeneficiario(id: number | string) {
   if (error) throw error;
   return { success: true };
 }
+
+export async function updateBeneficiarioLegajos(id_beneficiario: number | string, assignedLegajoIds: number[]) {
+  // Obtener legajos actuales
+  const { data: currentLegajos, error: fetchError } = await supabaseAuth
+    .from('beneficiarios_has_legajos')
+    .select('id_legajo')
+    .eq('id_beneficiario', id_beneficiario);
+  
+  if (fetchError) throw fetchError;
+
+  const currentIds = (currentLegajos || []).map(l => l.id_legajo);
+  
+  // Calcular qué eliminar y qué insertar
+  const toDelete = currentIds.filter(id => !assignedLegajoIds.includes(id));
+  const toInsert = assignedLegajoIds.filter(id => !currentIds.includes(id));
+  
+  // Ejecutar eliminaciones
+  if (toDelete.length > 0) {
+    const { error: deleteError } = await supabaseAuth
+      .from('beneficiarios_has_legajos')
+      .delete()
+      .eq('id_beneficiario', id_beneficiario)
+      .in('id_legajo', toDelete);
+    
+    if (deleteError) throw deleteError;
+  }
+  
+  // Ejecutar inserciones
+  if (toInsert.length > 0) {
+    const { error: insertError } = await supabaseAuth
+      .from('beneficiarios_has_legajos')
+      .insert(toInsert.map(id_legajo => ({ id_beneficiario, id_legajo })));
+    
+    if (insertError) throw insertError;
+  }
+  
+  return { success: true, deleted: toDelete.length, inserted: toInsert.length };
+}

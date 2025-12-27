@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react';
-import { getBeneficiario } from '@/lib/api';
+import { getBeneficiario, updateBeneficiarioLegajos } from '@/lib/api';
 import PumaLoader from '@/components/pumaLoader/PumaLoader';
 import EditProtagonista from './editProtagonista/EditProtagonista';
 import ProgresionesForm from './progresionesForm/ProgresionesForm';
@@ -19,6 +19,16 @@ export default function ViewProtagonista({ id, initialData, allLegajos }: { id: 
     setIsRefetching(false);
   };
 
+  const handleSaveLegajos = async (assignedLegajos: number[]) => {
+    try {
+      await updateBeneficiarioLegajos(id, assignedLegajos);
+      await refetch();
+    } catch (error) {
+      console.error('Error al actualizar legajos:', error);
+      throw error;
+    }
+  }
+
   if (!beneficiario || isRefetching) return <PumaLoader />;
 
   const { nombre, nacimiento, ...rest } = beneficiario;
@@ -34,7 +44,7 @@ export default function ViewProtagonista({ id, initialData, allLegajos }: { id: 
         <p>Progresion actual: <strong>{rest.progresiones?.nombre || '-'}</strong></p>
         <ProgresionesForm protagonista={beneficiario} onEdit={refetch} />
 
-        <LegajosTable protagonistaLegajos={beneficiario.legajos || []} allLegajos={allLegajos} />
+        <LegajosTable protagonistaLegajos={beneficiario.legajos || []} allLegajos={allLegajos} onSave={handleSaveLegajos} />
       </div>
     </article>
   );
