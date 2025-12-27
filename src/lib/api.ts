@@ -5,7 +5,11 @@ export async function getBeneficiarios() {
     `
 		*,
 		ramas:id_rama(id, nombre),
-		progresiones:id_progresion(id, nombre)
+		progresiones:id_progresion(id, nombre),
+    beneficiarios_has_legajos (
+      id_legajo,
+      legajos:id_legajo(legajo)
+    )
 	  `
   );
 

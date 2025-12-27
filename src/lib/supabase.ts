@@ -37,6 +37,7 @@ export type Beneficiario = {
   ramas?: Rama;
   progresiones?: Progresion;
   legajos?: BeneficiarioHasLegajos[];
+  beneficiarios_has_legajos?: BeneficiarioHasLegajos[];
   fecha_cambio_progresion: string | null;
 };
 

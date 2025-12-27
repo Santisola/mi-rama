@@ -1,12 +1,11 @@
 'use client'
-import NewBeneficiario from '@/components/newBeneficiario/NewBeneficiario';
 import { Beneficiario } from '@/lib/supabase';
 import { SquarePen, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react';
-import Modal from '../ui/Modal/Modal';
 import { deleteBeneficiario, getBeneficiarios } from '@/lib/api';
-import { useUser } from '@/context/UserContext';
+import NewBeneficiario from '@/components/newBeneficiario/NewBeneficiario';
+import Modal from '../ui/Modal/Modal';
 import PumaLoader from '../pumaLoader/PumaLoader';
 
 const getRamaClasses = (ramaId : string | number) => {
@@ -24,7 +23,17 @@ const getRamaClasses = (ramaId : string | number) => {
 	}
 }
 
-export default function BeneficiariosTable({beneficiarios, profile}: {beneficiarios: Beneficiario[], profile: Profile | null}) {
+const validateMissingLegajos = (beneficiario: Beneficiario, allLegajos: Legajo[]) => {
+	const assignedLegajosIds = beneficiario.beneficiarios_has_legajos?.map(bl => bl.id_legajo) || [];
+	const missingLegajos = allLegajos.filter(l => !assignedLegajosIds.includes(l.id));
+	return missingLegajos;
+}
+
+export default function BeneficiariosTable({
+	beneficiarios,
+	profile,
+	allLegajos
+}: {beneficiarios: Beneficiario[], profile: Profile | null, allLegajos: Legajo[]}) {
 	const [beneficiariosToList, setBeneficiariosToList] = useState<Beneficiario[]>([...beneficiarios]);
 	const [filteredByRama, setFilteredByRama] = useState<Beneficiario[]>([...beneficiarios]);
 	const [displayedBeneficiarios, setDisplayedBeneficiarios] = useState<Beneficiario[] | null>(null);
@@ -114,7 +123,7 @@ export default function BeneficiariosTable({beneficiarios, profile}: {beneficiar
 
 	return (
 	<>
-	<div className='flex justify-between items-center my-4'>
+	<div className='md:flex justify-between items-center my-4'>
         <h2 className='my-4 text-2xl'>Protagonistas</h2>
         <NewBeneficiario onCreate={beneficiarioCreated} />
 	</div>
@@ -155,8 +164,8 @@ export default function BeneficiariosTable({beneficiarios, profile}: {beneficiar
 	</div>
 	
 	<div className='relative'>
-		<div className='overflow-x-auto'>
-			<div className='bg-white shadow-sm rounded-lg overflow-hidden'>
+		<div>
+			<div className='bg-white shadow-sm rounded-lg overflow-x-auto'>
 				<table className="w-full text-sm text-left text-gray-600">
 				<thead className="bg-gradient-to-r from-primary/5 to-transparent">
 				<tr>
@@ -168,7 +177,10 @@ export default function BeneficiariosTable({beneficiarios, profile}: {beneficiar
 				</tr>
 				</thead>
 				<tbody>
-				{displayedBeneficiarios.map((beneficiario, idx) => (
+				{displayedBeneficiarios.map((beneficiario, idx) => {
+					const missingLegajos = validateMissingLegajos(beneficiario, allLegajos);
+					
+					return (
 					<tr
 						key={beneficiario.id}
 						className={`transition-colors duration-150 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-gray-100`}
@@ -179,7 +191,13 @@ export default function BeneficiariosTable({beneficiarios, profile}: {beneficiar
 						onClick={() => router.push(`/protagonista/${beneficiario.id}`)}
 					>
 						<div className='flex flex-col'>
-							<span className='text-gray-900'>{beneficiario.nombre}</span>
+							<span className='text-gray-900 flex items-center justify-between min-w-44'>
+								{beneficiario.nombre}
+								{missingLegajos.length > 0 &&
+								<span className="bg-orange-500 text-white w-fit text-[11px] text-center rounded-md p-1 flex items-center justify-center ml-2 relative" title="Falta entregar legajos">
+									Faltan {missingLegajos.length} legajos
+								</span>}
+							</span>
 							<small className='text-gray-500'>{beneficiario.nacimiento}</small>
 						</div>
 					</td>
@@ -199,7 +217,7 @@ export default function BeneficiariosTable({beneficiarios, profile}: {beneficiar
 						</div>
 					</td>
 					</tr>
-				))}
+				)})}
 				{displayedBeneficiarios.length === 0 && (
 					<tr>
 						<td colSpan={5} className="px-4 py-6 text-center text-gray-500">
