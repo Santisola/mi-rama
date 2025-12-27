@@ -27,6 +27,11 @@ export async function getBeneficiario(id: number | string) {
     .single();
 
   if (error) throw error;
+  
+  const { data: legajosData } = await getLegajosByPibe(id);
+
+  data.legajos = legajosData || null;
+  
   return data;
 }
 
@@ -37,6 +42,36 @@ export async function getProgresiones() {
 	  `
   );
 
+  if (error) throw error;
+  return data;
+}
+
+export async function getLegajosByPibe(id: number | string) {
+  const { data, error } = await supabase
+  .from('beneficiarios_has_legajos')
+  .select(
+    `
+    *,
+    legajo:id_legajo(*),
+    protagonista:id_beneficiario(*)
+    `
+  )
+  .eq('id_beneficiario', id);
+  
+  if (error) console.error('Error fetching legajos by pibe:', error);
+
+  return {data, error};
+}
+
+export async function getAllLegajos() {
+  const { data, error } = await supabase
+  .from('legajos')
+  .select(
+    `
+    *
+    `
+  )
+  
   if (error) throw error;
   return data;
 }

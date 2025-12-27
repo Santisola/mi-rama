@@ -36,8 +36,17 @@ export type Beneficiario = {
   created_at?: string;
   ramas?: Rama;
   progresiones?: Progresion;
+  legajos?: BeneficiarioHasLegajos[];
   fecha_cambio_progresion: string | null;
 };
+
+export type BeneficiarioHasLegajos = {
+  id: number;
+  id_beneficiario: number;
+  id_legajo: number;
+  legajo?: Legajo;
+  protagonista?: Beneficiario;
+}
 
 export type BeneficiarioFormInput = {
     id?: number,

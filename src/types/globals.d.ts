@@ -14,6 +14,11 @@ declare global {
     }
   }
 
+  interface Legajo {
+    id: number,
+    legajo: string,
+  }
+
   interface Profile {
     approved: boolean
     id: string,

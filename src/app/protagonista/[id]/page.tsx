@@ -1,5 +1,5 @@
 import ViewProtagonista from "./ViewProtagonista";
-import { getBeneficiario } from "@/lib/api";
+import { getAllLegajos, getBeneficiario } from "@/lib/api";
 
 export default async function Page({
   params,
@@ -8,6 +8,7 @@ export default async function Page({
 }) {
   const { id } = await params;
   const data = await getBeneficiario(id);
+  const allLegajos = await getAllLegajos();
 
-  return <ViewProtagonista id={id} initialData={data} />;
+  return <ViewProtagonista id={id} initialData={data} allLegajos={allLegajos} />;
 }

@@ -4,10 +4,11 @@ import { getBeneficiario } from '@/lib/api';
 import PumaLoader from '@/components/pumaLoader/PumaLoader';
 import EditProtagonista from './editProtagonista/EditProtagonista';
 import ProgresionesForm from './progresionesForm/ProgresionesForm';
+import LegajosTable from './legajosTable/LegajosTable';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 
-export default function ViewProtagonista({ id, initialData }: { id: string, initialData: any }) {
+export default function ViewProtagonista({ id, initialData, allLegajos }: { id: string, initialData: any, allLegajos: Legajo[] }) {
   const [beneficiario, setBeneficiario] = useState(initialData);
   const [isRefetching, setIsRefetching] = useState(false)
 
@@ -32,6 +33,8 @@ export default function ViewProtagonista({ id, initialData }: { id: string, init
         <EditProtagonista beneficiario={beneficiario} onEdit={refetch} />
         <p>Progresion actual: <strong>{rest.progresiones?.nombre || '-'}</strong></p>
         <ProgresionesForm protagonista={beneficiario} onEdit={refetch} />
+
+        <LegajosTable protagonistaLegajos={beneficiario.legajos || []} allLegajos={allLegajos} />
       </div>
     </article>
   );

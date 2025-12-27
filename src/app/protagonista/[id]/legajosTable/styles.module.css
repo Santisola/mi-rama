@@ -1,0 +1,99 @@
+/* Styles for LegajosTable component */
+.container {
+  border: 1px solid var(--accent-2, #e6e6e6);
+  border-radius: 8px;
+  padding: 12px;
+  background: var(--card-bg, #fff);
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+.summary {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.count {
+  font-weight: 700;
+  color: var(--primary, #0f766e);
+}
+.countLabel {
+  font-size: 0.85rem;
+  color: #666;
+}
+.toolbar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f7f7f8;
+  padding: 6px 8px;
+  border-radius: 8px;
+  flex: 1 1 220px;
+}
+.searchIcon { width: 16px; height: 16px; color: #888 }
+.searchInput {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: 0.95rem;
+}
+.toggle {
+  background: transparent;
+  border: 1px solid #ddd;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.tableWrap {
+  display: block;
+  border-top: 1px solid #eee;
+}
+.rowHeader {
+  display: grid;
+  grid-template-columns: 1fr 80px;
+  padding: 8px 6px;
+  font-size: 0.85rem;
+  color: #444;
+  background: transparent;
+}
+.row {
+  display: grid;
+  grid-template-columns: 1fr 80px;
+  align-items: center;
+  padding: 10px 6px;
+  gap: 8px;
+  border-bottom: 1px solid #f1f1f1;
+  transition: background 0.12s ease;
+  cursor: default;
+}
+.row:focus {
+  outline: 2px solid rgba(15,118,110,0.15);
+  background: #fbfffe;
+}
+.row:hover {
+  background: #fafafa;
+}
+.assigned {
+  background: linear-gradient(90deg, rgba(15,118,110,0.03), transparent);
+}
+.colName { font-size: 0.95rem }
+.colStatus { text-align: center }
+.badge { display:inline-flex; align-items:center; justify-content:center }
+.iconOk { color: var(--primary, #0f766e); width:18px; height:18px }
+.iconAlert { color: #ef4444; width:18px; height:18px }
+.empty { padding: 12px; color: #666; font-size:0.95rem }
