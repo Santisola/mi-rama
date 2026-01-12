@@ -77,14 +77,14 @@ export async function signOut() {
   }
 }
 
-export async function getCurrentUser(supabase: SupabaseClient<any>) {
+export async function getCurrentUser(supabase: any) {
   const { data: { user }, error } = await supabase.auth.getUser();
   if (error) throw error;
   return user;
 }
 
 export async function getCurrentUserProfile(
-  supabase: SupabaseClient<any>
+  supabase: any
 ) {
   try {
     const user = await getCurrentUser(supabase);

@@ -3,42 +3,42 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Database } from '@/types/supabase';
 
 // Create a single supabase client for interacting with your database
-export const supabase = createClient<Database>(
+export const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL ?? '',
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? ''
 );
 
-export const supabaseAuth = createClientComponentClient<Database>();
+export const supabaseAuth = createClientComponentClient();
 
 // Types for our database tables
 export type Rama = {
   id: number;
   nombre: string;
-  created_at?: string;
+  created_at?: string | null;
 };
 
 export type Progresion = {
   id: number;
   nombre: string;
-  descripcion?: string;
-  imagen?: string;
-  id_rama: number;
-  created_at?: string;
-  ramas?: Rama;
+  descripcion?: string | null;
+  imagen?: string | null;
+  id_rama?: number;
+  created_at?: string | null;
+  ramas?: Rama | null;
 };
 
 export type Beneficiario = {
   id: number;
   nombre: string;
   nacimiento: string;
-  genero?: string;
+  genero: string | null;
   id_rama: number;
-  id_progresion?: number;
-  created_at?: string;
-  ramas?: Rama;
-  progresiones?: Progresion;
-  legajos?: BeneficiarioHasLegajos[];
-  beneficiarios_has_legajos?: BeneficiarioHasLegajos[];
+  id_progresion: number | null;
+  created_at: string | null;
+  ramas?: Rama | null;
+  progresiones?: Progresion | null;
+  legajos?: BeneficiarioHasLegajos[] | null;
+  beneficiarios_has_legajos?: BeneficiarioHasLegajos[] | null;
   fecha_cambio_progresion: string | null;
 };
 
