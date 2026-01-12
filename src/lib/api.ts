@@ -51,7 +51,7 @@ export async function getProgresiones() {
 }
 
 export async function getLegajosByPibe(id: number | string) {
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from('beneficiarios_has_legajos')
     .select(
       `
@@ -64,11 +64,11 @@ export async function getLegajosByPibe(id: number | string) {
 
   if (error) console.error('Error fetching legajos by pibe:', error);
 
-  return { data, error };
+  return { data: data as any, error };
 }
 
-export async function getAllLegajos() {
-  const { data, error } = await supabase
+export async function getAllLegajos(): Promise<Legajo[]> {
+  const { data, error } = await (supabase as any)
     .from('legajos')
     .select(
       `
@@ -77,7 +77,7 @@ export async function getAllLegajos() {
     )
 
   if (error) throw error;
-  return data;
+  return (data as any) as Legajo[];
 }
 
 export async function updateBeneficiario(beneficiario: BeneficiarioFormInput) {
@@ -152,7 +152,7 @@ export async function deleteBeneficiario(id: number | string) {
 
 export async function updateBeneficiarioLegajos(id_beneficiario: number | string, assignedLegajoIds: number[]) {
   // Obtener legajos actuales
-  const { data: currentLegajos, error: fetchError } = await supabaseAuth
+  const { data: currentLegajos, error: fetchError } = await (supabaseAuth as any)
     .from('beneficiarios_has_legajos')
     .select('id_legajo')
     .eq('id_beneficiario', id_beneficiario);
@@ -167,7 +167,7 @@ export async function updateBeneficiarioLegajos(id_beneficiario: number | string
 
   // Ejecutar eliminaciones
   if (toDelete.length > 0) {
-    const { error: deleteError } = await supabaseAuth
+    const { error: deleteError } = await (supabaseAuth as any)
       .from('beneficiarios_has_legajos')
       .delete()
       .eq('id_beneficiario', id_beneficiario)
@@ -178,7 +178,7 @@ export async function updateBeneficiarioLegajos(id_beneficiario: number | string
 
   // Ejecutar inserciones
   if (toInsert.length > 0) {
-    const { error: insertError } = await supabaseAuth
+    const { error: insertError } = await (supabaseAuth as any)
       .from('beneficiarios_has_legajos')
       .insert(toInsert.map(id_legajo => ({ id_beneficiario, id_legajo })));
 
@@ -213,7 +213,7 @@ import type {
 export async function getDiarioActivoByBeneficiario(
   beneficiarioId: number | string
 ): Promise<DiarioMarchaConRelaciones | null> {
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from('diarios_marcha')
     .select(`
       id,
@@ -251,7 +251,7 @@ export async function getDiarioActivoByBeneficiario(
 export async function getCompetenciasByDiario(
   diarioId: number | string
 ): Promise<DiarioCompetenciaConRelaciones[]> {
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from('diario_competencias')
     .select(`
       id,
@@ -281,15 +281,15 @@ export async function getCompetenciasByDiario(
 export async function getAccionesByDiarioCompetencia(
   diarioCompetenciaId: number | string
 ): Promise<Accion[]> {
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from('acciones')
     .select('*')
     .eq('diario_competencia_id', diarioCompetenciaId)
-    .order('fecha', { ascending: false });
+    .order('fecha', { ascending: true });
 
   if (error) throw error;
 
-  return data || [];
+  return (data as any) as Accion[];
 }
 
 /**
@@ -298,15 +298,15 @@ export async function getAccionesByDiarioCompetencia(
 export async function getObservacionesByDiarioCompetencia(
   diarioCompetenciaId: number | string
 ): Promise<ObservacionEducador[]> {
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from('observaciones_educador')
     .select('*')
     .eq('diario_competencia_id', diarioCompetenciaId)
-    .order('fecha', { ascending: false });
+    .order('fecha', { ascending: true });
 
   if (error) throw error;
 
-  return data || [];
+  return (data as any) as ObservacionEducador[];
 }
 
 /**
@@ -357,10 +357,10 @@ export async function getProgresoByDiario(
  * Create a new action for a competency
  */
 export async function createAccion(
-  diarioCompetenciaId: number,
+  diarioCompetenciaId: number | string,
   formData: AccionFormInput
 ): Promise<Accion> {
-  const { data, error } = await supabaseAuth
+  const { data, error } = await (supabaseAuth as any)
     .from('acciones')
     .insert({
       diario_competencia_id: diarioCompetenciaId,
@@ -373,18 +373,18 @@ export async function createAccion(
 
   if (error) throw error;
 
-  return data;
+  return (data as any) as Accion;
 }
 
 /**
  * Create a new educator observation for a competency
  */
 export async function createObservacion(
-  diarioCompetenciaId: number,
+  diarioCompetenciaId: number | string,
   educadorId: string,
   formData: ObservacionFormInput
 ): Promise<ObservacionEducador> {
-  const { data, error } = await supabaseAuth
+  const { data, error } = await (supabaseAuth as any)
     .from('observaciones_educador')
     .insert({
       diario_competencia_id: diarioCompetenciaId,
@@ -397,16 +397,16 @@ export async function createObservacion(
 
   if (error) throw error;
 
-  return data;
+  return (data as any) as ObservacionEducador;
 }
 
 /**
  * Mark a competency as achieved (lograda)
  */
 export async function marcarCompetenciaLograda(
-  diarioCompetenciaId: number
+  diarioCompetenciaId: number | string
 ): Promise<void> {
-  const { error } = await supabaseAuth
+  const { error } = await (supabaseAuth as any)
     .from('diario_competencias')
     .update({
       estado: 'lograda',
@@ -421,10 +421,10 @@ export async function marcarCompetenciaLograda(
  * Close a stage (etapa) by setting fecha_cierre and reflexion_final
  */
 export async function cerrarEtapa(
-  diarioId: number,
+  diarioId: number | string,
   reflexionFinal: string
 ): Promise<void> {
-  const { error } = await supabaseAuth
+  const { error } = await (supabaseAuth as any)
     .from('diarios_marcha')
     .update({
       fecha_cierre: new Date().toISOString(),
@@ -438,14 +438,14 @@ export async function cerrarEtapa(
  * Get all stages for a specific rama
  */
 export async function getEtapas(ramaId: number | string): Promise<Etapa[]> {
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from('etapas')
     .select('*')
     .eq('rama_id', ramaId)
     .order('orden', { ascending: true });
 
   if (error) throw error;
-  return data || [];
+  return (data as any) as Etapa[];
 }
 
 /**
@@ -456,16 +456,16 @@ export async function getCompetenciasDisponibles(
   diarioId: number | string
 ): Promise<Competencia[]> {
   // 1. Get IDs of competencies already in the diary
-  const { data: existing, error: existingError } = await supabase
+  const { data: existing, error: existingError } = await (supabase as any)
     .from('diario_competencias')
     .select('competencia_id')
     .eq('diario_id', diarioId);
 
   if (existingError) throw existingError;
-  const existingIds = (existing || []).map(e => e.competencia_id);
+  const existingIds = (existing || []).map((e: any) => e.competencia_id);
 
   // 2. Get all competencies for the rama
-  let query = supabase
+  let query = (supabase as any)
     .from('competencias')
     .select('*')
     .eq('rama_id', ramaId);
@@ -476,7 +476,7 @@ export async function getCompetenciasDisponibles(
 
   const { data, error } = await query;
   if (error) throw error;
-  return data || [];
+  return (data as any) as Competencia[];
 }
 
 /**
@@ -494,7 +494,7 @@ export async function asignarCompetencias(
     estado: 'elegida' as const
   }));
 
-  const { error } = await supabaseAuth
+  const { error } = await (supabaseAuth as any)
     .from('diario_competencias')
     .insert(inserts);
 
@@ -508,7 +508,7 @@ export async function updateDiarioEtapa(
   diarioId: number,
   etapaId: number
 ): Promise<void> {
-  const { error } = await supabaseAuth
+  const { error } = await (supabaseAuth as any)
     .from('diarios_marcha')
     .update({ etapa_id: etapaId })
     .eq('id', diarioId);
@@ -524,7 +524,7 @@ export async function createDiarioMarcha(
   etapaId: number,
   reflexionInicial: string
 ): Promise<DiarioMarchaConRelaciones> {
-  const { data, error } = await supabaseAuth
+  const { data, error } = await (supabaseAuth as any)
     .from('diarios_marcha')
     .insert({
       beneficiario_id: beneficiarioId,
