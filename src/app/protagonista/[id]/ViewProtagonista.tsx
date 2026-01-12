@@ -45,9 +45,9 @@ export default function ViewProtagonista({ id, initialData, allLegajos }: { id: 
         <p>Progresion actual: <strong>{rest.progresiones?.nombre || '-'}</strong></p>
         <ProgresionesForm protagonista={beneficiario} onEdit={refetch} />
 
-        <LegajosTable protagonistaLegajos={beneficiario.legajos || []} allLegajos={allLegajos} onSave={handleSaveLegajos} />
-
         {rest.ramas?.id === 3 && <DiarioMarcha beneficiarioId={Number(id)} />}
+
+        <LegajosTable protagonistaLegajos={beneficiario.legajos || []} allLegajos={allLegajos} onSave={handleSaveLegajos} />
       </div>
     </article>
   );
