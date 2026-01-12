@@ -5,6 +5,7 @@ import PumaLoader from '@/components/pumaLoader/PumaLoader';
 import EditProtagonista from './editProtagonista/EditProtagonista';
 import ProgresionesForm from './progresionesForm/ProgresionesForm';
 import LegajosTable from './legajosTable/LegajosTable';
+import DiarioMarcha from './diarioMarcha/DiarioMarcha';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 
@@ -45,6 +46,8 @@ export default function ViewProtagonista({ id, initialData, allLegajos }: { id: 
         <ProgresionesForm protagonista={beneficiario} onEdit={refetch} />
 
         <LegajosTable protagonistaLegajos={beneficiario.legajos || []} allLegajos={allLegajos} onSave={handleSaveLegajos} />
+
+        {rest.ramas?.id === 3 && <DiarioMarcha beneficiarioId={Number(id)} />}
       </div>
     </article>
   );
