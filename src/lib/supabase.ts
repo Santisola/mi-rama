@@ -1,13 +1,14 @@
 import { createClient } from '@supabase/supabase-js';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { Database } from '@/types/supabase';
 
 // Create a single supabase client for interacting with your database
-export const supabase = createClient(
+export const supabase = createClient<Database>(
   process.env.NEXT_PUBLIC_SUPABASE_URL ?? '',
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? ''
 );
 
-export const supabaseAuth = createClientComponentClient();
+export const supabaseAuth = createClientComponentClient<Database>();
 
 // Types for our database tables
 export type Rama = {
@@ -50,11 +51,11 @@ export type BeneficiarioHasLegajos = {
 }
 
 export type BeneficiarioFormInput = {
-    id?: number,
-    nombre?: string,
-    nacimiento?: string,
-    genero?: string,
-    rama?: string | number,
-    progresion?: string | number,
-    fecha_cambio_progresion?: string
+  id?: number,
+  nombre?: string,
+  nacimiento?: string,
+  genero?: string,
+  rama?: string | number,
+  progresion?: string | number,
+  fecha_cambio_progresion?: string
 }
